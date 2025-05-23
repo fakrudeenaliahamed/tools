@@ -9,8 +9,15 @@ import pandas as pd
 from datetime import datetime, timedelta
 import io
 import base64
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 def compare_mutual_funds(fund1_symbol, fund2_symbol, duration="3mo"):
@@ -118,6 +125,32 @@ def compare():
     data = request.json
     result = compare_mutual_funds(data["fund1"], data["fund2"], data["duration"])
     return jsonify(result)
+
+
+@app.route("/resolve_symbol", methods=["POST"])
+def resolve_symbol():
+    data = request.json
+    fund_name = data.get("fund_name", "")
+    if not fund_name:
+        return jsonify({"error": "No fund name provided"}), 400
+
+    prompt = (
+        f"Given the mutual fund name '{fund_name}', "
+        "what is the most likely Yahoo Finance symbol for this Indian mutual fund? "
+        "Respond with only the symbol (no explanation)."
+    )
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=20,
+            temperature=0,
+        )
+        symbol = response.choices[0].message["content"].strip().split()[0]
+        return jsonify({"symbol": symbol})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
