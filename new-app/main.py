@@ -137,17 +137,20 @@ def resolve_symbol():
     prompt = (
         f"Given the mutual fund name '{fund_name}', "
         "what is the most likely Yahoo Finance symbol for this Indian mutual fund? "
-        "Respond with only the symbol (no explanation)."
+        "Respond with only the symbol (no explanation). IF the fund name is not valid, respond with 'N/A'. "
+        "Do not include any other text or explanation."
+        "Only respond with the symbol if you are sure about it. "
     )
 
     try:
-        response = openai.ChatCompletion.create(
+        client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=20,
             temperature=0,
         )
-        symbol = response.choices[0].message["content"].strip().split()[0]
+        symbol = response.choices[0].message.content.strip().split()[0]
         return jsonify({"symbol": symbol})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

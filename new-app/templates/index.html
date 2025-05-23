@@ -188,6 +188,27 @@
         color: #424242;
         font-size: 0.9rem;
       }
+      .search-symbol-btn {
+        margin-left: 8px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 6px;
+        background: #2e86ab;
+        color: #fff;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.2s;
+      }
+      .search-symbol-btn:hover {
+        background: #1976d2;
+      }
+      .symbol-result {
+        margin-left: 10px;
+        font-size: 0.95rem;
+        color: #1976d2;
+        font-weight: 600;
+        min-width: 80px;
+      }
       @media (max-width: 768px) {
         .header h1 {
           font-size: 2rem;
@@ -224,6 +245,14 @@
                 placeholder="e.g., Parag Parikh Flexi Cap or 0P0000YWL1.BO"
                 required
               />
+              <button
+                type="button"
+                class="search-symbol-btn"
+                onclick="searchSymbol('fund1')"
+              >
+                🔍
+              </button>
+              <span id="fund1-symbol-result" class="symbol-result"></span>
             </div>
             <div class="input-group">
               <label for="fund2">Second Fund Name or Symbol</label>
@@ -235,6 +264,14 @@
                 placeholder="e.g., Nippon India Small Cap or 0P0000ZU6L.BO"
                 required
               />
+              <button
+                type="button"
+                class="search-symbol-btn"
+                onclick="searchSymbol('fund2')"
+              >
+                🔍
+              </button>
+              <span id="fund2-symbol-result" class="symbol-result"></span>
             </div>
             <datalist id="fund-list">
               <option value="Parag Parikh Flexi Cap"></option>
@@ -320,20 +357,47 @@
           document.getElementById("compareBtn").disabled = true;
 
           try {
-            // Make real API call to Flask backend
             const response = await fetch("/compare", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ fund1, fund2, duration }),
             });
-            const data = await response.json();
 
-            if (data.error) {
+            if (!response.ok) {
+              const text = await response.text();
+              console.error("HTTP error:", response.status, text);
+              displayError(
+                "Server error (" +
+                  response.status +
+                  "). Please try again later."
+              );
+              return;
+            }
+
+            // Log the raw response text before parsing
+            const rawText = await response.clone().text();
+            console.log("Raw backend response:", rawText);
+
+            let data;
+            try {
+              data = await response.json();
+            } catch (jsonErr) {
+              console.error("JSON parse error:", jsonErr, rawText);
+              displayError("Invalid server response. Please try again.");
+              return;
+            }
+
+            console.log("Backend data:", data);
+
+            if (!data || typeof data !== "object") {
+              displayError("No data received from server.");
+            } else if (data.error) {
               displayError(data.error);
             } else {
               displayResults(data);
             }
           } catch (error) {
+            console.error("Fetch error:", error);
             displayError(
               "Failed to fetch fund data. Please check the fund symbols and try again."
             );
@@ -347,46 +411,65 @@
         const summaryContainer = document.getElementById("performanceSummary");
         const chartContainer = document.getElementById("chartContainer");
 
-        // Create performance cards
-        summaryContainer.innerHTML = `
-                <div class="performance-card">
-                    <h3>${data.fund1_symbol}</h3>
-                    <div class="performance-value ${
-                      data.fund1_return >= 0 ? "positive" : "negative"
-                    }">
-                        ${
-                          data.fund1_return >= 0 ? "+" : ""
-                        }${data.fund1_return.toFixed(2)}%
-                    </div>
-                    <small>Total Return</small>
-                </div>
-                
-                <div class="performance-card">
-                    <h3>${data.fund2_symbol}</h3>
-                    <div class="performance-value ${
-                      data.fund2_return >= 0 ? "positive" : "negative"
-                    }">
-                        ${
-                          data.fund2_return >= 0 ? "+" : ""
-                        }${data.fund2_return.toFixed(2)}%
-                    </div>
-                    <small>Total Return</small>
-                </div>
-                
-                <div class="performance-card" style="border-left-color: #28a745;">
-                    <h3>Winner</h3>
-                    <div class="performance-value" style="color: #28a745; font-size: 1.5rem;">
-                        ${data.winner}
-                    </div>
-                    <small>Best Performer</small>
-                </div>
-            `;
+        // Helper to safely format numbers
+        function safePercent(val) {
+          return typeof val === "number" && !isNaN(val)
+            ? val.toFixed(2) + "%"
+            : "N/A";
+        }
 
-        // Display chart
+        summaryContainer.innerHTML = `
+    <div class="performance-card">
+        <h3>${data.fund1_symbol || "N/A"}</h3>
+        <div class="performance-value ${
+          typeof data.fund1_return === "number"
+            ? data.fund1_return >= 0
+              ? "positive"
+              : "negative"
+            : ""
+        }">
+            ${
+              typeof data.fund1_return === "number" && data.fund1_return >= 0
+                ? "+"
+                : ""
+            }${safePercent(data.fund1_return)}
+        </div>
+        <small>Total Return</small>
+    </div>
+    
+    <div class="performance-card">
+        <h3>${data.fund2_symbol || "N/A"}</h3>
+        <div class="performance-value ${
+          typeof data.fund2_return === "number"
+            ? data.fund2_return >= 0
+              ? "positive"
+              : "negative"
+            : ""
+        }">
+            ${
+              typeof data.fund2_return === "number" && data.fund2_return >= 0
+                ? "+"
+                : ""
+            }${safePercent(data.fund2_return)}
+        </div>
+        <small>Total Return</small>
+    </div>
+    
+    <div class="performance-card" style="border-left-color: #28a745;">
+        <h3>Winner</h3>
+        <div class="performance-value" style="color: #28a745; font-size: 1.5rem;">
+            ${data.winner || "N/A"}
+        </div>
+        <small>Best Performer</small>
+    </div>
+  `;
+
         chartContainer.innerHTML = `
-                <h3 style="margin-bottom: 20px; color: #333;">Performance Chart</h3>
-                <img src="${data.chart_data}" alt="Fund Comparison Chart" style="max-width: 100%; height: auto;">
-            `;
+    <h3 style="margin-bottom: 20px; color: #333;">Performance Chart</h3>
+    <img src="${
+      data.chart_data || ""
+    }" alt="Fund Comparison Chart" style="max-width: 100%; height: auto;">
+  `;
 
         document.getElementById("results").style.display = "block";
         document
@@ -398,6 +481,39 @@
         const resultsContainer = document.getElementById("results");
         resultsContainer.innerHTML = `<div class="error">${message}</div>`;
         resultsContainer.style.display = "block";
+      }
+
+      async function searchSymbol(fundInputId) {
+        const fundInput = document.getElementById(fundInputId);
+        const resultSpan = document.getElementById(
+          fundInputId + "-symbol-result"
+        );
+        resultSpan.textContent = ""; // Clear previous result
+        const fundName = fundInput.value.trim();
+        if (!fundName) {
+          resultSpan.textContent = "Enter fund name";
+          return;
+        }
+        resultSpan.textContent = "Searching...";
+        try {
+          const response = await fetch("/resolve_symbol", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fund_name: fundName }),
+          });
+          const data = await response.json();
+          if (data.symbol) {
+            resultSpan.textContent = `Symbol: ${data.symbol}`;
+            // Optionally autofill the input with the symbol:
+            // fundInput.value = data.symbol;
+          } else if (data.error) {
+            resultSpan.textContent = "Not found";
+          } else {
+            resultSpan.textContent = "No result";
+          }
+        } catch (err) {
+          resultSpan.textContent = "Error";
+        }
       }
     </script>
   </body>
