@@ -357,7 +357,7 @@
           document.getElementById("compareBtn").disabled = true;
 
           try {
-            const response = await fetch("/compare", {
+            const response = await fetch("/funds/compare", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ fund1, fund2, duration }),
@@ -496,7 +496,7 @@
         }
         resultSpan.textContent = "Searching...";
         try {
-          const response = await fetch("/resolve_symbol", {
+          const response = await fetch("/funds/resolve_symbol", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ fund_name: fundName }),
