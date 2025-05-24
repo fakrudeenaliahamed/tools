@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Notes App</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e8eaf6 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px #0002;
+        padding: 36px 32px 32px 32px;
+        color: #23272f;
+      }
+      h1 {
+        color: #fff;
+        background: linear-gradient(90deg, #19c37d 0%, #2e86ab 100%);
+        padding: 22px 0 18px 0;
+        border-radius: 12px 12px 0 0;
+        margin: -36px -32px 32px -32px;
+        font-size: 2.1em;
+        text-align: center;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 8px #19c37d22;
+      }
+      form {
+        margin-bottom: 30px;
+      }
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #1976d2;
+      }
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 7px;
+        border: 1px solid #cfd8dc;
+        background: #f4f8fb;
+        font-size: 1em;
+        color: #23272f;
+        transition: border 0.2s;
+      }
+      input[type="text"]:focus,
+      textarea:focus {
+        border: 1.5px solid #19c37d;
+        outline: none;
+        background: #fff;
+      }
+      textarea {
+        min-height: 80px;
+      }
+      .btn {
+        background: #19c37d;
+        color: #fff;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 7px;
+        cursor: pointer;
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 1em;
+        transition: background 0.2s, color 0.2s;
+      }
+      .btn:hover {
+        background: #1976d2;
+        color: #fff;
+      }
+      .note {
+        background: #f7fafc;
+        border-left: 5px solid #19c37d;
+        margin-bottom: 24px;
+        padding: 18px 22px 16px 22px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #0001;
+        transition: box-shadow 0.2s;
+      }
+      .note:hover {
+        box-shadow: 0 4px 16px #19c37d22;
+      }
+      .tags {
+        color: #888;
+        font-size: 0.98em;
+        margin-top: 8px;
+      }
+      .search-bar {
+        margin-bottom: 25px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .search-bar input[type="text"] {
+        flex: 1;
+        margin: 0;
+      }
+      .flash {
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+      .flash-success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .flash-error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .flash-info {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      .note-title {
+        font-size: 1.18em;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #1976d2;
+      }
+      .note-content {
+        margin-bottom: 8px;
+        line-height: 1.7;
+        font-size: 1.04em;
+        word-break: break-word;
+      }
+      .note-summary {
+        background: #fffbe6;
+        color: #856404;
+        padding: 8px;
+        border-radius: 5px;
+        margin-top: 8px;
+      }
+      .note-actions {
+        margin-top: 10px;
+      }
+      a {
+        text-decoration: none;
+        color: #19c37d;
+        font-weight: bold;
+        transition: color 0.2s;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #1976d2;
+      }
+      /* Code block styling for note previews */
+      pre,
+      code {
+        font-family: "Fira Mono", "Consolas", "Menlo", monospace;
+        background: #f4f6fa;
+        color: #2d3a4a;
+        border-radius: 8px;
+      }
+      pre {
+        padding: 12px;
+        margin: 12px 0;
+        overflow-x: auto;
+        font-size: 0.98em;
+        border: 1px solid #e0e0e0;
+        background: #f4f6fa;
+      }
+      code {
+        padding: 2px 6px;
+        background: #e8eaf6;
+        color: #d6336c;
+        border-radius: 4px;
+        font-size: 1em;
+      }
+      p code,
+      li code {
+        background: #e8eaf6;
+        color: #d6336c;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📝 Notes App</h1>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <!-- Search bar -->
+      <form method="get" class="search-bar">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search by title or tags..."
+          value="{{ search_query or '' }}"
+        />
+        <button type="submit" class="btn">Search</button>
+        {% if search_query %}
+        <a
+          href="{{ url_for('notes.index') }}"
+          class="btn"
+          style="background: #888"
+          >Clear</a
+        >
+        {% endif %}
+      </form>
+
+      <!-- Add Note Form -->
+      <form method="post">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          required
+          placeholder="Enter note title"
+        />
+
+        <label for="content">Content (Paste from Gemini/ChatGPT, etc.)</label>
+        <textarea
+          name="content"
+          id="content"
+          required
+          placeholder="Paste your important info here..."
+        ></textarea>
+
+        <button type="submit" class="btn">Save Note</button>
+      </form>
+
+      <hr style="margin: 35px 0" />
+
+      <!-- Notes List -->
+      {% if notes %} {% for note in notes %}
+      <div class="note">
+        <div class="note-title">{{ note.Title }}</div>
+        <div class="note-content">{{ note.HTMLContent | safe }}</div>
+        {% if note.Tags %}
+        <div class="tags">Tags: {{ note.Tags }}</div>
+        {% endif %}
+        <div class="note-actions">
+          <a
+            href="{{ url_for('notes.view_note', note_id=note.id) }}"
+            class="btn"
+            style="background: #1976d2"
+            >View</a
+          >
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <p>No notes found.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

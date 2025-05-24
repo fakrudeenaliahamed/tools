@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ note.Title }} - Note</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e8eaf6 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px #0001;
+        padding: 36px 32px 32px 32px;
+        color: #23272f;
+      }
+      h1 {
+        color: #19c37d;
+        font-size: 2.1em;
+        margin-bottom: 18px;
+      }
+      .tags {
+        color: #666;
+        font-size: 0.98em;
+        margin-top: 8px;
+      }
+      .note-content {
+        margin: 28px 0;
+        line-height: 1.7;
+        font-size: 1.08em;
+        word-break: break-word;
+      }
+      .btn {
+        background: #19c37d;
+        color: #fff;
+        border: none;
+        padding: 10px 28px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1em;
+        transition: background 0.2s;
+      }
+      .btn:hover {
+        background: #13a06f;
+      }
+      .flash {
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+      .flash-success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .flash-error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .flash-info {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      .note-summary {
+        background: #fffbe6;
+        color: #856404;
+        padding: 14px;
+        border-radius: 7px;
+        margin-top: 22px;
+        font-size: 1.08em;
+      }
+      a {
+        text-decoration: none;
+        color: #19c37d;
+        font-weight: bold;
+        transition: color 0.2s;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #1976d2;
+      }
+      /* Code block styling */
+      pre,
+      code {
+        font-family: "Fira Mono", "Consolas", "Menlo", monospace;
+        background: #f4f6fa;
+        color: #2d3a4a;
+        border-radius: 8px;
+      }
+      pre {
+        padding: 18px;
+        margin: 18px 0;
+        overflow-x: auto;
+        font-size: 1em;
+        border: 1px solid #e0e0e0;
+        background: #f4f6fa;
+      }
+      code {
+        padding: 2px 6px;
+        background: #e8eaf6;
+        color: #d6336c;
+        border-radius: 4px;
+        font-size: 1em;
+      }
+      /* Inline code */
+      p code,
+      li code {
+        background: #e8eaf6;
+        color: #d6336c;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="{{ url_for('notes.index') }}">&larr; Back to Notes</a>
+      <h1>{{ note.Title }}</h1>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="note-content">{{ note.HTMLContent | safe }}</div>
+      {% if note.Tags %}
+      <div class="tags">Tags: {{ note.Tags }}</div>
+      {% endif %}
+
+      <!-- Summary Section -->
+      <form method="post" style="margin-top: 25px">
+        <button type="submit" class="btn">Generate Summary (AI)</button>
+      </form>
+      {% if summary %}
+      <div class="note-summary"><strong>Summary:</strong> {{ summary }}</div>
+      {% endif %}
+    </div>
+  </body>
+</html>

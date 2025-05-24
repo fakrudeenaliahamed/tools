@@ -3,7 +3,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from flask import Flask, render_template, request, jsonify
+from flask import Blueprint, Flask, render_template, request, jsonify
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
@@ -13,9 +13,9 @@ import openai
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+funds_bp = Blueprint("funds", __name__, template_folder="templates")
 
-app = Flask(__name__)
+load_dotenv()
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
@@ -115,19 +115,19 @@ def compare_mutual_funds(fund1_symbol, fund2_symbol, duration="3mo"):
         return {"error": str(e)}
 
 
-@app.route("/")
+@funds_bp.route("/")
 def index():
-    return render_template("index.html")  # Your HTML file
+    return render_template("funds_index.html")
 
 
-@app.route("/compare", methods=["POST"])
+@funds_bp.route("/compare", methods=["POST"])
 def compare():
     data = request.json
     result = compare_mutual_funds(data["fund1"], data["fund2"], data["duration"])
     return jsonify(result)
 
 
-@app.route("/resolve_symbol", methods=["POST"])
+@funds_bp.route("/resolve_symbol", methods=["POST"])
 def resolve_symbol():
     data = request.json
     fund_name = data.get("fund_name", "")
@@ -154,7 +154,3 @@ def resolve_symbol():
         return jsonify({"symbol": symbol})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=10000)
