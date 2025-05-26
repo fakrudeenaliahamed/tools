@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Latest Concalls - Screener</title>
+
+    <!-- plausible -->
+    <script
+      defer
+      event-user="free"
+      data-domain="screener.in"
+      src="https://plausible.screener.in/js/script.pageview-props.tagged-events.js"
+    ></script>
+    <script>
+      window.plausible =
+        window.plausible ||
+        function () {
+          (window.plausible.q = window.plausible.q || []).push(arguments);
+        };
+    </script>
+
+    <!-- FONT -->
+    <link
+      rel="stylesheet"
+      href="https://cdn-static.screener.in/inter/inter.43d4904a3137.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-static.screener.in/fontello/css/fontello.bc317748a65f.css"
+    />
+
+    <!-- CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn-static.screener.in/css/normalize.a2444750a947.css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-static.screener.in/css/skeleton.9aa9c32992ef.css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-static.screener.in/css/custom.38d15c997427.css"
+      media="all"
+    />
+
+    <style>
+      main {
+        max-width: 720px;
+      }
+
+      #sidebar {
+        margin-top: 18px;
+      }
+
+      @media (min-width: 576px) {
+        #sidebar {
+          margin-left: 72px;
+          max-width: 300px;
+          min-width: 18%;
+        }
+
+        #sidebar .card {
+          margin-left: 0;
+          margin-right: 0;
+        }
+      }
+
+      @media (min-width: 992px) {
+        #sidebar {
+          /* align sidebar content till right */
+          margin-right: calc(-1 * var(--container-padding));
+        }
+      }
+    </style>
+
+    <meta name="author" content="Mittal Analytics Private Limited" />
+
+    <!-- PWA manifest -->
+    <meta
+      name="theme-color"
+      content="#fff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#222530"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="manifest" href="/static/manifest.json" />
+
+    <!-- favicons -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://cdn-static.screener.in/favicon/apple-touch-icon.b6e5f24bf7d3.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://cdn-static.screener.in/favicon/favicon-32x32.00205914303a.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="https://cdn-static.screener.in/favicon/favicon-16x16.2b35594b2f33.png"
+    />
+    <link
+      rel="mask-icon"
+      href="https://cdn-static.screener.in/favicon/safari-pinned-tab.adbe3ed3c5ad.svg"
+      color="#8ED443"
+    />
+    <meta name="msapplication-TileColor" content="#da532c" />
+  </head>
+
+  <body class="light flex-column">
+    <nav class="u-full-width no-print">
+      <div id="mobile-search">
+        <div class="has-addon left-addon dropdown-typeahead">
+          <i class="addon icon-search"></i>
+          <input
+            aria-label="Search for a company"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Search for a company"
+            class="u-full-width"
+            data-company-search="true"
+          />
+        </div>
+      </div>
+
+      <ul class="bottom-menu-bar hide-from-tablet-landscape">
+        <li class="">
+          <a href="/">
+            <i class="icon-news"></i>
+            <br />
+            Feed
+          </a>
+        </li>
+
+        <li class="">
+          <a href="/explore/">
+            <i class="icon-screens"></i>
+            <br />
+            Screens
+          </a>
+        </li>
+
+        <li>
+          <button
+            type="button"
+            onclick="MobileMenu.toggleSearch(this)"
+            class="search-button"
+            title="Search"
+          >
+            <i class="icon-search" style="font-size: 18px"></i>
+          </button>
+        </li>
+
+        <li>
+          <button
+            class="button-plain"
+            onclick="Modal.showInModal('#nav-tools-menu')"
+          >
+            <i class="icon-tools"></i>
+            <br />
+            Tools
+          </button>
+        </li>
+
+        <li class="">
+          <button
+            class="button-plain"
+            onclick="Modal.showInModal('#nav-user-menu')"
+          >
+            <i class="icon-user"></i>
+            <br />
+            Account
+          </button>
+        </li>
+      </ul>
+
+      <div class="top-nav-holder">
+        <div class="container">
+          <div class="layer-holder top-navigation">
+            <div
+              class="layer flex flex-space-between"
+              style="align-items: center; height: 50px"
+            >
+              <div class="flex" style="align-items: center">
+                <a href="/" class="logo-holder">
+                  <img
+                    alt="Screener Logo"
+                    class="logo"
+                    src="https://cdn-static.screener.in/img/logo-black.f44abb4998d1.svg"
+                  />
+                </a>
+
+                <div class="desktop-links" style="margin-left: 48px">
+                  <a href="/"> Feed </a>
+                  <a href="/explore/">Screens</a>
+                  <div class="dropdown-menu">
+                    <button
+                      class="button-plain"
+                      type="button"
+                      onclick="Utils.toggleDropdown(event)"
+                    >
+                      Tools
+                      <i class="icon-down"></i>
+                    </button>
+                    <ul
+                      class="dropdown-content flex-column tools-menu"
+                      style="width: 350px"
+                      id="nav-tools-menu"
+                    >
+                      <li>
+                        <a
+                          href="/screen/new/"
+                          class="flex flex-align-center flex-gap-16"
+                        >
+                          <div class="bg-stripes square-56">
+                            <img
+                              src="https://cdn-static.screener.in/icons/screens.e960a5daedf9.svg"
+                              alt="Create a stock screen"
+                            />
+                          </div>
+                          <div>
+                            <div class="font-weight-500 font-size-14">
+                              Create a stock screen
+                            </div>
+                            <div class="sub font-size-13">
+                              Run queries on 10 years of financial data
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li
+                        class="flex flex-align-center no-hover"
+                        style="padding: 4px 0"
+                      >
+                        <div
+                          class="button button-primary premium-indicator flex flex-align-center"
+                        >
+                          <img
+                            src="https://cdn-static.screener.in/icons/crown.fb0d2413ee43.svg"
+                            alt="Premium icon"
+                            style="margin-right: 8px"
+                          />
+                          <span>Premium features</span>
+                        </div>
+                        <hr class="flex-grow" style="padding: 0; margin: 0" />
+                      </li>
+                      <li>
+                        <a
+                          href="/hs/"
+                          class="flex flex-align-center flex-gap-16"
+                        >
+                          <div class="bg-stripes square-56">
+                            <img
+                              src="https://cdn-static.screener.in/icons/export.d623f0029933.svg"
+                              alt="Commodity Prices"
+                            />
+                          </div>
+                          <div>
+                            <div class="font-weight-500 font-size-14">
+                              Commodity Prices
+                            </div>
+                            <div class="sub font-size-13">
+                              See prices and trends of over 10,000 commodities
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="/people/"
+                          class="flex flex-align-center flex-gap-16"
+                        >
+                          <div class="bg-stripes square-56">
+                            <img
+                              src="https://cdn-static.screener.in/icons/shares.10acc20cb936.svg"
+                              alt="Search shareholders by name"
+                            />
+                          </div>
+                          <div>
+                            <div class="font-weight-500 font-size-14">
+                              Search shareholders
+                            </div>
+                            <div class="sub font-size-13">
+                              See companies where a person holds over 1% of the
+                              shares
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="/announcements/"
+                          class="flex flex-align-center flex-gap-16"
+                        >
+                          <div class="bg-stripes square-56">
+                            <img
+                              src="https://cdn-static.screener.in/icons/loudspeaker.88769927f6eb.svg"
+                              alt="Latest Announcements"
+                            />
+                          </div>
+                          <div>
+                            <div class="font-weight-500 font-size-14">
+                              Latest Announcements
+                            </div>
+                            <div class="sub font-size-13">
+                              Browse, filter and set alerts for announcements.
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+
+                      <li style="padding: 16px">
+                        <a
+                          href="/premium/?driver=top-nav-tools"
+                          class="button button-primary text-align-center"
+                          style="color: var(--white); padding: 10px 24px"
+                          >Upgrade to premium</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="show-from-tablet-landscape flex flex-gap-16"
+                style="justify-content: flex-end; flex: 1 1 400px"
+              >
+                <div class="search" id="desktop-search">
+                  <div class="has-addon left-addon dropdown-typeahead">
+                    <i class="addon icon-search"></i>
+                    <input
+                      aria-label="Search for a company"
+                      type="search"
+                      autocomplete="off"
+                      spellcheck="false"
+                      placeholder="Search for a company"
+                      class="u-full-width"
+                      data-company-search="true"
+                    />
+                  </div>
+                </div>
+
+                <div id="account-dropdown" class="dropdown-menu">
+                  <button
+                    class="account"
+                    type="button"
+                    onclick="Utils.toggleDropdown(event)"
+                  >
+                    <i class="icon-user-line blue-icon"></i>
+                    Fakrudeen
+
+                    <i class="icon-down"></i>
+                  </button>
+
+                  <div
+                    class="dropdown-content flex-column font-size-14 font-weight-500"
+                    style="right: 0; width: 154px"
+                    id="nav-user-menu"
+                  >
+                    <a href="/user/account/">
+                      <i class="icon-settings"></i>
+                      Profile
+                    </a>
+                    <a href="/alerts/">
+                      <i class="icon-bell"></i>
+                      Alerts
+                    </a>
+                    <a href="/notebook/">
+                      <i class="icon-book-open"></i>
+                      Notebook
+                    </a>
+
+                    <a href="/premium/?driver=user-nav-dropdown">
+                      <i class="icon-crown"></i>
+                      Upgrade
+                    </a>
+
+                    <hr class="no-hover" />
+                    <form action="/logout/" method="post" style="padding: 0">
+                      <input
+                        type="hidden"
+                        name="csrfmiddlewaretoken"
+                        value="Oo5GzjSuiR1Ao1OzP6CHW4g63cmBnfvQlXv4hjG3rESFEfqRXpDgGMPz0I2KFgBM"
+                      />
+                      <button
+                        type="submit"
+                        class="button-plain"
+                        style="width: 100%; padding: 4px 16px"
+                      >
+                        <i class="icon-off"></i>
+                        Logout
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container flex-grow">
+      <div class="breadcrumb">
+        <ul>
+          <li>
+            <a href="/dash/">Dashboard</a>
+          </li>
+
+          <li>
+            <a href="/filings/">Market Data</a>
+          </li>
+
+          <li>Concalls</li>
+        </ul>
+      </div>
+      <div class="flex flex-column-mobile">
+        <main class="flex-grow">
+          <h1 class="h2">Latest Concalls</h1>
+
+          <div class="card card-large change-list">
+            <div id="toolbar-wrapper">
+              <div id="toolbar">
+                <form id="changelist-search" method="get" role="search">
+                  <div>
+                    <!-- DIV needed for valid HTML -->
+                    <label for="searchbar"
+                      ><img
+                        src="https://cdn-static.screener.in/admin/img/search.7cf54ff789c6.svg"
+                        alt="Search"
+                    /></label>
+                    <input
+                      type="text"
+                      size="40"
+                      name="q"
+                      value=""
+                      id="searchbar"
+                    />
+                    <input type="submit" value="Search" />
+                  </div>
+                </form>
+              </div>
+
+              <button
+                type="button"
+                class="hide-from-tablet-landscape"
+                data-title="Filters"
+                onclick="Modal.showInModal('#change-list-filters', this)"
+              >
+                <i class="icon-filter"></i> Filters
+              </button>
+            </div>
+
+            <nav class="toplinks">
+              <a href="?" class="date-back">&lsaquo; All dates</a>
+
+              <a href="?pub_date__month=2&amp;pub_date__year=2025"
+                >February 2025</a
+              >
+
+              <a href="?pub_date__month=3&amp;pub_date__year=2025"
+                >March 2025</a
+              >
+
+              <a href="?pub_date__month=4&amp;pub_date__year=2025"
+                >April 2025</a
+              >
+
+              <a href="?pub_date__month=5&amp;pub_date__year=2025">May 2025</a>
+            </nav>
+
+            <div class="fill-card-width margin-top-24 striped-first">
+              <div class="responsive-holder">
+                <div class="results">
+                  <table id="result_list">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="column-company_display">
+                          <div class="text"><span>Company</span></div>
+                          <div class="clear"></div>
+                        </th>
+                        <th scope="col" class="column-pub_date">
+                          <div class="text"><span>Pub date</span></div>
+                          <div class="clear"></div>
+                        </th>
+                        <th scope="col" class="column-action_display">
+                          <div class="text"><span>Action</span></div>
+                          <div class="clear"></div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=ce1afd7e-5ab5-4cdc-a5aa-e5f25d9a30f7.pdf"
+                            ><a
+                              href="/company/WEL/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Wonder Electric.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=ce1afd7e-5ab5-4cdc-a5aa-e5f25d9a30f7.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=d679dad4-34ce-4e6b-9769-547c95a5b91c.pdf"
+                            ><a
+                              href="/company/STYRENIX/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Styrenix Perfor.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=d679dad4-34ce-4e6b-9769-547c95a5b91c.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=36331f40-db65-47dd-b07d-771a240384f2.pdf"
+                            ><a
+                              href="/company/PERMAGNET/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Permanent Magnet</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=36331f40-db65-47dd-b07d-771a240384f2.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=837c16d7-345c-4c38-a87a-bc7d1370edfe.pdf"
+                            ><a
+                              href="/company/KALAMANDIR/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link">Sai Silks</span>
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=837c16d7-345c-4c38-a87a-bc7d1370edfe.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Transcript<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=2b621f40-a392-489b-8d42-d327835b8af6.pdf"
+                            ><a
+                              href="/company/KALAMANDIR/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link">Sai Silks</span>
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=2b621f40-a392-489b-8d42-d327835b8af6.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Transcript<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=af87a7bd-4dc3-439b-8a8c-551eeb0393e5.pdf"
+                            ><a
+                              href="/company/SATINDLTD/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Sat Industries</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=af87a7bd-4dc3-439b-8a8c-551eeb0393e5.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=e7f50923-a0c2-4269-a979-9a4db028f4f1.pdf"
+                            ><a
+                              href="/company/544073/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Manoj Ceramic</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=e7f50923-a0c2-4269-a979-9a4db028f4f1.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=55e495a0-7626-4311-9f59-0a1b21076ca8.pdf"
+                            ><a
+                              href="/company/DIXON/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Dixon Technolog.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=55e495a0-7626-4311-9f59-0a1b21076ca8.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Transcript<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=27097708-8286-4522-b5a3-a22dfbcf2db7.pdf"
+                            ><a
+                              href="/company/ASHIMASYN/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link">Ashima</span>
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=27097708-8286-4522-b5a3-a22dfbcf2db7.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=d404615c-31ab-4dc1-bfef-7578f6caa459.pdf"
+                            ><a
+                              href="/company/ASHOKA/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Ashoka Buildcon</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=d404615c-31ab-4dc1-bfef-7578f6caa459.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=802fce2a-4fb0-4761-98b4-7ab7ba1e52ee.pdf"
+                            ><a
+                              href="/company/EXICOM/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Exicom Tele-Sys.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=802fce2a-4fb0-4761-98b4-7ab7ba1e52ee.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=78fd0bbf-c5e5-45bc-9a2c-a7f8beb52d18.pdf"
+                            ><a
+                              href="/company/SHANKARA/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Shankara Build.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=78fd0bbf-c5e5-45bc-9a2c-a7f8beb52d18.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Transcript<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=3620f511-96c6-42bb-9e39-e88ef36d67a4.pdf"
+                            ><a
+                              href="/company/SOLARINDS/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Solar Industries</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=3620f511-96c6-42bb-9e39-e88ef36d67a4.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Transcript<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=731c2169-2d34-412c-b925-8e7361303e17.pdf"
+                            ><a
+                              href="/company/542446/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Jonjua Overseas</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=731c2169-2d34-412c-b925-8e7361303e17.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=a768efbb-cc43-41c5-9173-c53f1d2ca002.pdf"
+                            ><a
+                              href="/company/EXICOM/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Exicom Tele-Sys.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=a768efbb-cc43-41c5-9173-c53f1d2ca002.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=d051afd7-2533-46b6-91aa-245781a6829f.pdf"
+                            ><a
+                              href="/company/FAZE3Q/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Faze Three</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">24 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=d051afd7-2533-46b6-91aa-245781a6829f.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=bba96f72-fc89-48e3-a545-42d2f9140613.pdf"
+                            ><a
+                              href="/company/FINPIPE/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Finolex Inds.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">23 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=bba96f72-fc89-48e3-a545-42d2f9140613.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=4d906d4b-26f6-4121-bfa6-3e6a57f5b0d4.pdf"
+                            ><a
+                              href="/company/RADIANTCMS/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Radiant Cash</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">23 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=4d906d4b-26f6-4121-bfa6-3e6a57f5b0d4.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=1c4d332e-da2b-48d0-865c-1c97c7835b22.pdf"
+                            ><a
+                              href="/company/SHAREINDIA/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Share India Sec.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">23 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=1c4d332e-da2b-48d0-865c-1c97c7835b22.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/EMAIN_22052025190514_IntimationEarningCalls31032025.pdf"
+                            ><a
+                              href="/company/EMAPARTNER/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >EMA Partners</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">22 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/EMAIN_22052025190514_IntimationEarningCalls31032025.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/VINSYS_22052025163833_Intimation.pdf"
+                            ><a
+                              href="/company/VINSYS/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Vinsys IT Serv.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">22 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/VINSYS_22052025163833_Intimation.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/POSITRON_22052025144748_Announcement_IR.pdf"
+                            ><a
+                              href="/company/POSITRON/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Positron Energy</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">22 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/POSITRON_22052025144748_Announcement_IR.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/ALLETECH_22052025134713_INVESTOR_PRESENTATION_22052025.pdf"
+                            ><a
+                              href="/company/ALLETEC/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >All E Tech</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">22 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/ALLETECH_22052025134713_INVESTOR_PRESENTATION_22052025.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/BLUEPEBBLE_22052025164203_InvestorMeetingTranscript17052025.pdf"
+                            ><a
+                              href="/company/BLUEPEBBLE/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Blue Pebble</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">22 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/BLUEPEBBLE_22052025164203_InvestorMeetingTranscript17052025.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Transcript<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th class="field-company_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/STEELCITY_22052025132109_Upload.pdf"
+                            ><a
+                              href="/company/STEELCITY/consolidated/"
+                              target="_blank"
+                              class="font-weight-500"
+                              ><span class="ink-900 hover-link"
+                                >Steel City Sec.</span
+                              >
+                              <i class="icon-link-ext"></i></a
+                          ></a>
+                        </th>
+                        <td class="field-pub_date nowrap">22 May 2025</td>
+                        <td class="field-action_display">
+                          <a
+                            href="https://nsearchives.nseindia.com/corporate/STEELCITY_22052025132109_Upload.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="font-weight-500"
+                            >View Presentation<i class="icon-link-ext"></i
+                          ></a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <p class="paginator">
+              <span class="this-page">1</span>
+
+              <a href="?p=2">2</a>
+
+              <a href="?p=3">3</a>
+
+              <a href="?p=4">4</a>
+
+              …
+
+              <a href="?p=88">88</a>
+
+              <a href="?p=89" class="end">89</a>
+
+              2207 concalls
+            </p>
+          </div>
+        </main>
+        <aside id="sidebar" class="flex-grow show-from-tablet-landscape">
+          <div class="sidebar-panel" id="change-list-filters">
+            <div class="title flex flex-space-between flex-align-center">
+              <span class="show-from-tablet-landscape">
+                <i class="icon-filter ink-700"></i>
+                Filter
+              </span>
+            </div>
+
+            <div class="content">
+              <div class="change-list-filter">
+                <details data-filter-title="Market Cap" open>
+                  <summary>By Market Cap</summary>
+                  <ul>
+                    <li class="selected">
+                      <a href="?">All</a>
+                    </li>
+
+                    <li>
+                      <a href="?mcap=0_to_50">0 - 50 Cr</a>
+                    </li>
+
+                    <li>
+                      <a href="?mcap=50_to_500">50 - 500 Cr</a>
+                    </li>
+
+                    <li>
+                      <a href="?mcap=500_to_5000">500 - 5,000 Cr</a>
+                    </li>
+
+                    <li>
+                      <a href="?mcap=above_5000">&gt; 5,000 Cr</a>
+                    </li>
+
+                    <li>
+                      <form>
+                        <input
+                          class="small"
+                          type="text"
+                          name="mcap_min"
+                          style="max-width: 60px"
+                          placeholder="Min"
+                          value=""
+                        />
+                        <input
+                          class="small"
+                          type="text"
+                          name="mcap_max"
+                          style="max-width: 60px"
+                          placeholder="Max"
+                          value=""
+                        />
+                        <input type="hidden" name="mcap" value="custom" />
+                        <input
+                          type="submit"
+                          class="button button-small"
+                          value="Go"
+                        />
+                      </form>
+                    </li>
+                  </ul>
+                </details>
+              </div>
+
+              <div class="change-list-filter">
+                <details data-filter-title="category" open>
+                  <summary>By category</summary>
+                  <ul>
+                    <li class="selected">
+                      <a href="?">All</a>
+                    </li>
+
+                    <li>
+                      <a href="?category__exact=transcript">Transcript</a>
+                    </li>
+
+                    <li>
+                      <a href="?category__exact=recording">Recording</a>
+                    </li>
+
+                    <li>
+                      <a href="?category__exact=presentation">Presentation</a>
+                    </li>
+                  </ul>
+                </details>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <footer id="large-footer">
+      <div
+        class="flex-row flex-space-between flex-column-tablet container no-print"
+      >
+        <div class="hide-from-tablet" style="margin-bottom: 16px">
+          <img
+            src="https://cdn-static.screener.in/img/logo-black.f44abb4998d1.svg"
+            alt="Screener Logo"
+            style="max-width: 120px"
+            class="logo"
+          />
+        </div>
+
+        <div class="show-from-tablet" style="padding: 0 64px 0 0">
+          <img
+            src="https://cdn-static.screener.in/img/logo-black.f44abb4998d1.svg"
+            alt="Screener Logo"
+            style="max-width: 120px"
+            class="logo"
+          />
+          <p class="font-size-19" style="font-weight: 500">
+            Stock analysis and screening tool
+          </p>
+          <p class="sub">
+            Mittal Analytics Private Ltd &copy; 2009-2025
+            <br />
+            Made with <i class="icon-heart red"></i> in India.
+          </p>
+          <p class="sub font-size-13">
+            Data provided by C-MOTS Internet Technologies Pvt Ltd
+          </p>
+          <p class="font-size-13 sub">
+            <a href="/guides/terms/" class="underline-link">Terms</a> &
+            <a href="/guides/privacy/" class="underline-link">Privacy</a>.
+          </p>
+        </div>
+
+        <div
+          class="flex flex-end flex-space-between flex-grow"
+          style="max-width: 600px"
+        >
+          <div class="flex-grow">
+            <div class="title">Product</div>
+            <ul class="items">
+              <li>
+                <a href="/premium/?driver=footer">Premium</a>
+              </li>
+              <li>
+                <a href="/docs/changelog/">What's new?</a>
+              </li>
+              <li>
+                <a href="https://bit.ly/learnscreener">Learn</a>
+              </li>
+              <li>
+                <button class="a2hs button-secondary button-small">
+                  <i class="icon-flash"></i>
+                  Install
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flex-grow">
+            <div class="title">Team</div>
+            <ul class="items">
+              <li>
+                <a href="/guides/about-us/">About us</a>
+              </li>
+              <li>
+                <a href="/support/">Support</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flex-grow">
+            <div class="title">Theme</div>
+            <ul class="items">
+              <li>
+                <button
+                  onclick="SetTheme('light')"
+                  aria-label="Set light theme"
+                  class="button-plain"
+                >
+                  <i class="icon-sun"></i>
+                  Light
+                </button>
+              </li>
+              <li>
+                <button
+                  onclick="SetTheme('dark')"
+                  aria-label="Set dark theme"
+                  class="button-plain"
+                >
+                  <i class="icon-moon"></i>
+                  Dark
+                </button>
+              </li>
+              <li>
+                <button
+                  onclick="SetTheme('auto')"
+                  aria-label="Set auto theme"
+                  class="button-plain"
+                >
+                  <i class="icon-monitor"></i>
+                  Auto
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hide-from-tablet">
+          <hr />
+          <p class="sub">Mittal Analytics Private Ltd &copy; 2009-2024</p>
+          <p class="sub">
+            Data provided by C-MOTS Internet Technologies Pvt Ltd
+          </p>
+          <p class="sub">
+            <a href="/guides/terms/" class="underline-link">Terms</a>
+            & <a href="/guides/privacy/" class="underline-link">Privacy</a>.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Important JS (which provide global objects)- check below too -->
+    <script src="https://cdn-static.screener.in/js/dialog-polyfill.min.2b5bf9a032d2.js"></script>
+    <script src="https://cdn-static.screener.in/js/utils.02a9ce812e49.js"></script>
+    <script src="https://cdn-static.screener.in/js/modal.4f872e091355.js"></script>
+    <script src="https://cdn-static.screener.in/js/typeahead.8dcc9ac93685.js"></script>
+    <script src="https://cdn-static.screener.in/js/filter.component.5add9ef3b7a9.js"></script>
+
+    <!-- Independent JS scripts for page interactions -->
+    <script src="https://cdn-static.screener.in/js/navbar.3fe7f0f4a630.js"></script>
+    <script src="https://cdn-static.screener.in/js/company.search.e48f94642999.js"></script>
+
+    <!-- Service worker installer for PWA -->
+    <script src="https://cdn-static.screener.in/js/pwa.933118758337.js"></script>
+  </body>
+</html>
