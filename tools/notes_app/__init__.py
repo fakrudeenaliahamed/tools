@@ -39,11 +39,11 @@ except Exception as e:
 
 
 # --- Helper Functions ---
-def openai_chat(prompt, max_tokens=3000, temperature=0.7):
+def openai_chat(prompt, max_tokens=4000, temperature=0.5):
     try:
         client = openai.OpenAI(api_key=OPENAI_API_KEY)
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=max_tokens,
             temperature=temperature,
