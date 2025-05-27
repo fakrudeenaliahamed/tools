@@ -140,6 +140,24 @@ DRAFT CONTENT:
     return openai_chat(prompt, max_tokens=10000)
 
 
+def get_all_tags():
+    """Fetch all unique tags from Airtable."""
+    tags_set = set()
+    try:
+        # Only fetch the Tags field for efficiency
+        all_records = airtable.get_all(fields=["Tags"])
+        for record in all_records:
+            tags = record.get("fields", {}).get("Tags", "")
+            if tags:
+                # Assuming tags are comma-separated
+                for tag in [t.strip() for t in tags.split(",")]:
+                    if tag:
+                        tags_set.add(tag)
+    except Exception as e:
+        print(f"Error fetching tags from Airtable: {e}")
+    return sorted(tags_set)
+
+
 # --- Flask Routes ---
 @notes_bp.route("/", methods=["GET", "POST"])
 def index():
@@ -181,7 +199,9 @@ def index():
         if formula_parts:
             formula = f"OR({', '.join(formula_parts)})"
 
-        all_notes_raw = airtable.get_all(formula=formula, sort=[("CreatedAt", "desc")])
+        all_notes_raw = airtable.get_all(
+            formula=formula, sort=[("CreatedAt", "desc")], maxRecords=5
+        )
 
         for record in all_notes_raw:
             notes_to_display.append({"id": record["id"], **record.get("fields", {})})
@@ -194,8 +214,12 @@ def index():
         flash(f"Error fetching notes: {e}", "error")
         notes_to_display = []
 
+    all_tags = get_all_tags()
     return render_template(
-        "notes_index.html", notes=notes_to_display, search_query=search_query
+        "notes_index.html",
+        notes=notes_to_display,
+        search_query=search_query,
+        all_tags=all_tags,
     )
 
 

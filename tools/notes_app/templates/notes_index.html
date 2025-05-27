@@ -197,22 +197,19 @@
       {% endfor %} {% endif %} {% endwith %}
 
       <!-- Search bar -->
-      <form method="get" class="search-bar">
-        <input
-          type="text"
-          name="search"
-          placeholder="Search by title or tags..."
-          value="{{ search_query or '' }}"
-        />
-        <button type="submit" class="btn">Search</button>
-        {% if search_query %}
-        <a
-          href="{{ url_for('notes.index') }}"
-          class="btn"
-          style="background: #888"
-          >Clear</a
-        >
-        {% endif %}
+      <form method="get" action="{{ url_for('notes.index') }}">
+        <div>
+          <label for="tag-dropdown">Search by Tag:</label>
+          <select id="tag-dropdown" name="search" onchange="this.form.submit()">
+            <option value="">-- Select Tag --</option>
+            {% for tag in all_tags %}
+              <option value="{{ tag }}" {% if search_query == tag %}selected{% endif %}>{{ tag }}</option>
+            {% endfor %}
+          </select>
+          <span>or</span>
+          <input type="text" name="search" placeholder="Search..." value="{{ search_query }}">
+          <button type="submit">Search</button>
+        </div>
       </form>
 
       <!-- Add Note Form -->
