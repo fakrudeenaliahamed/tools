@@ -25,11 +25,6 @@
         font-size: 2.1em;
         margin-bottom: 18px;
       }
-      .tags {
-        color: #666;
-        font-size: 0.98em;
-        margin-top: 8px;
-      }
       .note-content {
         margin: 28px 0;
         line-height: 1.7;
@@ -130,17 +125,48 @@
       {% endfor %} {% endif %} {% endwith %}
 
       <div class="note-content">{{ note.HTMLContent | safe }}</div>
-      {% if note.Tags %}
-      <div class="tags">Tags: {{ note.Tags }}</div>
-      {% endif %}
 
       <!-- Summary Section -->
       <form method="post" style="margin-top: 25px">
         <button type="submit" class="btn">Generate Summary (AI)</button>
       </form>
       {% if summary %}
-      <div class="note-summary"><strong>Summary:</strong> {{ summary }}</div>
+      <div class="note-summary">
+        <strong>Summary:</strong>
+        <ul style="margin-top: 10px">
+          {% for line in summary.split('\n') if line.strip() %}
+          <li>{{ line.strip() }}</li>
+          {% endfor %}
+        </ul>
+      </div>
       {% endif %}
+
+      <!-- Show Latest Notes Table -->
+      <h2 style="margin-top: 40px">Latest Notes</h2>
+      <table
+        style="width: 100%; border-collapse: collapse; margin-bottom: 30px"
+      >
+        <thead>
+          <tr style="background: #f4f6fa">
+            <th style="text-align: left; padding: 8px">Title</th>
+            <th style="text-align: left; padding: 8px">Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for n in latest_notes %}
+          <tr>
+            <td style="padding: 8px">
+              <a href="{{ url_for('notes.view_note', note_id=n.id) }}"
+                >{{ n.Title }}</a
+              >
+            </td>
+            <td style="padding: 8px">
+              {{ n.Category if n.Category else "Default" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </body>
 </html>

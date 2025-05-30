@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Notes App</title>
+    <title>Notes</title>
     <style>
       body {
         font-family: "Segoe UI", "Roboto", Arial, sans-serif;
@@ -191,23 +191,25 @@
       <h1>📝 Notes App</h1>
 
       <!-- Flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div class="flash flash-{{ category }}">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
 
-      <!-- Search bar -->
+      <!-- Category Search Dropdown -->
       <form method="get" action="{{ url_for('notes.index') }}">
         <div>
-          <label for="tag-dropdown">Search by Tag:</label>
-          <select id="tag-dropdown" name="search" onchange="this.form.submit()">
-            <option value="">-- Select Tag --</option>
-            {% for tag in all_tags %}
-              <option value="{{ tag }}" {% if search_query == tag %}selected{% endif %}>{{ tag }}</option>
+          <label for="category-dropdown">Search by Category:</label>
+          <select id="category-dropdown" name="category" onchange="this.form.submit()">
+            <option value="">-- All Categories --</option>
+            {% for cat in all_categories %}
+              <option value="{{ cat }}" {% if category_query == cat %}selected{% endif %}>{{ cat|capitalize }}</option>
             {% endfor %}
+            <option value="Default" {% if category_query == "Default" %}selected{% endif %}>Default</option>
           </select>
-          <span>or</span>
-          <input type="text" name="search" placeholder="Search..." value="{{ search_query }}">
           <button type="submit">Search</button>
         </div>
       </form>
@@ -219,9 +221,17 @@
           type="text"
           name="title"
           id="title"
-          required
-          placeholder="Enter note title"
+          placeholder="Enter note title (leave blank for AI to generate)"
+          maxlength="100"
         />
+
+        <label for="category">Category</label>
+        <select name="category" id="category">
+          <option value="">Default</option>
+          {% for cat in all_categories %}
+            <option value="{{ cat }}">{{ cat|capitalize }}</option>
+          {% endfor %}
+        </select>
 
         <label for="content">Content (Paste from Gemini/ChatGPT, etc.)</label>
         <textarea
@@ -230,32 +240,26 @@
           required
           placeholder="Paste your important info here..."
         ></textarea>
-
-        <button type="submit" class="btn">Save Note</button>
+        <button type="submit">Add Note</button>
       </form>
 
-      <hr style="margin: 35px 0" />
-
       <!-- Notes List -->
-      {% if notes %} {% for note in notes %}
-      <div class="note">
-        <div class="note-title">{{ note.Title }}</div>
-        <div class="note-content">{{ note.HTMLContent | safe }}</div>
-        {% if note.Tags %}
-        <div class="tags">Tags: {{ note.Tags }}</div>
-        {% endif %}
-        <div class="note-actions">
-          <a
-            href="{{ url_for('notes.view_note', note_id=note.id) }}"
-            class="btn"
-            style="background: #1976d2"
-            >View</a
-          >
-        </div>
-      </div>
-      {% endfor %} {% else %}
-      <p>No notes found.</p>
-      {% endif %}
+      <h2>Latest Notes</h2>
+      <ul>
+        {% for note in notes %}
+          <li>
+            <a href="{{ url_for('notes.view_note', note_id=note.id) }}">{{ note.Title }}</a>
+            <span>
+              | Category:
+              {% if note.Category %}
+                {{ note.Category|capitalize }}
+              {% else %}
+                Default
+              {% endif %}
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
   </body>
 </html>

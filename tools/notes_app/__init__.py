@@ -43,7 +43,7 @@ def openai_chat(prompt, max_tokens=4000, temperature=0.5):
     try:
         client = openai.OpenAI(api_key=OPENAI_API_KEY)
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=max_tokens,
             temperature=temperature,
@@ -57,8 +57,8 @@ def openai_chat(prompt, max_tokens=4000, temperature=0.5):
 
 def process_with_openai(text_content):
     """
-    Sends content to OpenAI to get HTML formatting and tags.
-    Returns a tuple (html_output, tags_string) or (None, None) on error.
+    Sends content to OpenAI to get HTML formatting.
+    Returns html_output or None on error.
     """
     prompt = f"""
 Convert the following notes into clean, readable, semantically correct HTML for web display.
@@ -74,52 +74,29 @@ Instructions:
 
 Notes:
 {text_content}
-
-After the HTML, on a new line, provide 3-5 relevant tags, prefixed with "TAGS: ".
 """
-    full_response_text = openai_chat(prompt)
-    if not full_response_text:
+    html_output = openai_chat(prompt)
+    if not html_output:
         return None, None
-
-    html_output = full_response_text
-    tags_string = ""
-
-    tags_match = re.search(
-        r"TAGS:\s*(.*)", full_response_text, re.IGNORECASE | re.DOTALL
-    )
-    if tags_match:
-        tags_string = tags_match.group(1).strip()
-        html_output = re.sub(
-            r"TAGS:\s*(.*)", "", html_output, flags=re.IGNORECASE | re.DOTALL
-        ).strip()
-    else:
-        lines = full_response_text.strip().split("\n")
-        if (
-            len(lines) > 1
-            and "TAGS:" not in lines[-2]
-            and not lines[-1].startswith("<")
-        ):
-            tags_string = lines[-1].strip()
-            html_output = "\n".join(lines[:-1]).strip()
-
-    return html_output, tags_string
+    return html_output, None
 
 
 def summarize_with_openai(html_content_to_summarize):
     """
-    Sends HTML content to OpenAI to get a summary.
+    Sends HTML content to OpenAI to get a summary as bullet points.
     Returns summary text or None on error.
     """
     text_for_summary = re.sub("<[^<]+?>", "", html_content_to_summarize)
     text_for_summary = text_for_summary[:10000]
 
     prompt = f"""
-Please provide a concise summary (2-3 sentences) of the following text:
+Summarize the following text as concise bullet points (one point per line, no numbering, no extra text):
+
 ---
 {text_for_summary}
 ---
 """
-    return openai_chat(prompt, max_tokens=150)
+    return openai_chat(prompt, max_tokens=200)
 
 
 def generate_note_from_title_with_openai(title_for_note):
@@ -130,7 +107,7 @@ def generate_note_from_title_with_openai(title_for_note):
     prompt = f"""
 You are a helpful assistant. Please generate a short draft for a note based on the following title.
 The content should be a few paragraphs, suitable for a starting point.
-Do not include any "TAGS:" section or HTML formatting in this initial draft.
+Do not include any HTML formatting in this initial draft.
 Just provide the raw text content.
 
 TITLE: "{title_for_note}"
@@ -140,22 +117,25 @@ DRAFT CONTENT:
     return openai_chat(prompt, max_tokens=10000)
 
 
-def get_all_tags():
-    """Fetch all unique tags from Airtable."""
-    tags_set = set()
-    try:
-        # Only fetch the Tags field for efficiency
-        all_records = airtable.get_all(fields=["Tags"])
-        for record in all_records:
-            tags = record.get("fields", {}).get("Tags", "")
-            if tags:
-                # Assuming tags are comma-separated
-                for tag in [t.strip() for t in tags.split(",")]:
-                    if tag:
-                        tags_set.add(tag)
-    except Exception as e:
-        print(f"Error fetching tags from Airtable: {e}")
-    return sorted(tags_set)
+def generate_title_with_openai(note_content):
+    """
+    Generates a concise, relevant title for a note using OpenAI, max 100 chars.
+    """
+    prompt = f"""
+Given the following note content, generate a concise and relevant title (max 100 characters, no quotes):
+
+Content:
+{note_content}
+"""
+    title = openai_chat(prompt, max_tokens=30)
+    if title:
+        return title.strip()[:100]
+    return title
+
+
+def get_all_categories():
+    """Return the list of categories for the dropdown."""
+    return ["aws", "kubernetes", "networking"]
 
 
 # --- Flask Routes ---
@@ -168,17 +148,30 @@ def index():
     if request.method == "POST":
         title = request.form.get("title")
         content = request.form.get("content")
+        category = request.form.get("category") or "Default"
 
-        if not title or not content:
-            flash("Title and content are required for manual note.", "error")
+        if not content:
+            flash("Content is required for manual note.", "error")
             return redirect(url_for("notes.index"))
 
-        html_content, tags = process_with_openai(content)
+        if not title:
+            # Auto-generate title if not provided
+            title = generate_title_with_openai(content)
+            if not title:
+                flash("Failed to generate title.", "error")
+                return redirect(url_for("notes.index"))
+            title = title[:100]
+
+        html_content, _ = process_with_openai(content)
         if html_content is None:
             return redirect(url_for("notes.index"))
 
         try:
-            note_data = {"Title": title, "HTMLContent": html_content, "Tags": tags}
+            note_data = {
+                "Title": title,
+                "HTMLContent": html_content,
+                "Category": category,
+            }
             airtable.insert(note_data)
             flash("Note saved successfully!", "success")
         except Exception as e:
@@ -186,40 +179,30 @@ def index():
             flash(f"Error saving note to Airtable: {e}", "error")
         return redirect(url_for("notes.index"))
 
-    search_query = request.args.get("search", "")
+    # Search/filter logic
+    category_query = request.args.get("category", "")
     notes_to_display = []
     try:
-        formula_parts = []
-        if search_query:
-            escaped_query = search_query.replace("'", "\\'")
-            formula_parts.append(f"FIND(LOWER('{escaped_query}'), LOWER(Title))")
-            formula_parts.append(f"FIND(LOWER('{escaped_query}'), LOWER(Tags))")
-
         formula = ""
-        if formula_parts:
-            formula = f"OR({', '.join(formula_parts)})"
-
-        all_notes_raw = airtable.get_all(
-            formula=formula, sort=[("CreatedAt", "desc")], maxRecords=5
-        )
-
+        if category_query:
+            escaped_category = category_query.replace("'", "\\'")
+            formula = f"{{Category}} = '{escaped_category}'"
+        all_notes_raw = airtable.get_all(formula=formula, sort=[("CreatedAt", "desc")])
         for record in all_notes_raw:
             notes_to_display.append({"id": record["id"], **record.get("fields", {})})
-
-        if search_query and not notes_to_display:
-            flash(f"No notes found matching '{search_query}'.", "info")
-
+        if category_query and not notes_to_display:
+            flash(f"No notes found in category '{category_query}'.", "info")
     except Exception as e:
         print(f"Error fetching notes from Airtable: {e}")
         flash(f"Error fetching notes: {e}", "error")
         notes_to_display = []
 
-    all_tags = get_all_tags()
+    all_categories = get_all_categories()
     return render_template(
         "notes_index.html",
         notes=notes_to_display,
-        search_query=search_query,
-        all_tags=all_tags,
+        category_query=category_query,
+        all_categories=all_categories,
     )
 
 
@@ -230,6 +213,7 @@ def generate_note_route():
         return redirect(url_for("notes.index"))
 
     title = request.form.get("generate_title")
+    category = request.form.get("category") or "Default"
     if not title:
         flash("Title is required to generate a note.", "error")
         return redirect(url_for("notes.index"))
@@ -238,8 +222,8 @@ def generate_note_route():
     if not draft_content:
         return redirect(url_for("notes.index"))
 
-    html_content, tags = process_with_openai(draft_content)
-    if html_content is None or tags is None:
+    html_content, _ = process_with_openai(draft_content)
+    if html_content is None:
         flash("Failed to process the generated content from OpenAI.", "error")
         return redirect(url_for("notes.index"))
 
@@ -247,7 +231,7 @@ def generate_note_route():
         note_data = {
             "Title": title,
             "HTMLContent": html_content,
-            "Tags": tags,
+            "Category": category,
         }
         airtable.insert(note_data)
         flash(f"Note '{title}' generated and saved successfully! ✨", "success")
@@ -289,7 +273,24 @@ def view_note(note_id):
         record = airtable.get(note_id)
         if record and "fields" in record:
             note = {"id": record["id"], **record["fields"]}
-            return render_template("view_note.html", note=note, summary=summary)
+
+            # Fetch latest notes for sidebar
+            latest_notes = []
+            try:
+                all_notes_raw = airtable.get_all(
+                    sort=[("CreatedAt", "desc")], maxRecords=5
+                )
+                for record in all_notes_raw:
+                    if record["id"] != note_id:
+                        latest_notes.append(
+                            {"id": record["id"], **record.get("fields", {})}
+                        )
+            except Exception as e:
+                latest_notes = []
+
+            return render_template(
+                "view_note.html", note=note, summary=summary, latest_notes=latest_notes
+            )
         else:
             flash("Note not found.", "error")
             return redirect(url_for("notes.index"))
